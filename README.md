@@ -40,6 +40,8 @@ my $username = 'your_dev_to_username';
 my $blogname = "your_blog_name";
 ```
 
+You can adapt `style.css` to your own theme and use your own `favicon.png`.
+
 Generate the static site to a `target_directory`:
 
 
