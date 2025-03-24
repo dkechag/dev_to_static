@@ -1,4 +1,4 @@
-# dev_to_static
+# dev_to_static.pl
 
 A Perl script to create a static copy of your DEV (dev.to) blog.
 
@@ -33,7 +33,7 @@ It's useful if you want to host your content elsewhere, reach readers where DEV 
 
 ## Usage
 
-Change 2 lines in dev.to.pl with your username and your desired blog name:
+Change 2 lines in dev_to_static.pl with your username and your desired blog name:
 
 ```
 my $username = 'your_dev_to_username';
@@ -44,7 +44,7 @@ Generate the static site to a `target_directory`:
 
 
 ```
-perl dev.to.pl target_directory
+perl dev_to_static.pl target_directory
 ```
 
 You can run it on your web host, or run locally and copy the resulting directory to your host (scp/FTP/rsync etc).
