@@ -12,7 +12,7 @@ my $target   = $ARGV[0] || '.';
 my $username = 'your_dev_to_username';
 my $blogname = "your_blog_name";
 my $dir      = path(__FILE__)->absolute->parent;
-my $api_url  = "https://dev.to/api/articles?username=$username";
+my $api_url  = "https://dev.to/api/articles?username=$username&per_page=100";
 my $ua       = LWP::UserAgent->new(agent => 'Mozilla/5.0 Chrome/122.0.0.0 Safari/537.36');
 my @assets   = qw/style.css favicon.png/;
 
