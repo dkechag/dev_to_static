@@ -144,7 +144,8 @@ sub render_html {
         <script>hljs.highlightAll();</script>
         </head>
         <body>\n$content<footer class='site-footer'>
-        <p>This is a static mirror of <a href='https://dev.to/$username'>my DEV.to blog</a>, created for wider accessibility.</p>
+        <p>This is a static mirror of <a href='https://dev.to/$username'>my DEV.to blog</a>,
+        created for wider accessibility using <a href='https://github.com/dkechag/dev_to_static'>dev_to_static</a>.</p>
         </footer>
         </body>\n</html>"
     );
