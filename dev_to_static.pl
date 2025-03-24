@@ -101,7 +101,7 @@ foreach my $article (@$articles) {
     <div class='content'>$cover_image
     <div class='article'>
     <h1 class='post-title'>$article->{title}</h1>
-    <p class='meta'>$published on <a href='$url'>DEV.to</a> by $article->{user}->{name}</p>
+    <p class='meta'>$published on <a href='$url'>dev.to</a> by $article->{user}->{name}</p>
     <p class='tags'>$tag_links</p>$content<br>
     <p><b>To see the comments or leave new ones, visit <a href='$url'>original article on DEV.to</a>.</b></p>
     </div></div>$sidebar</div>";
@@ -144,7 +144,7 @@ sub render_html {
         <script>hljs.highlightAll();</script>
         </head>
         <body>\n$content<footer class='site-footer'>
-        <p>This is a static mirror of <a href='https://dev.to/$username'>my DEV.to blog</a>,
+        <p>This is a static mirror of <a href='https://dev.to/$username'>my DEV blog</a>,
         created for wider accessibility using <a href='https://github.com/dkechag/dev_to_static'>dev_to_static</a>.</p>
         </footer>
         </body>\n</html>"
