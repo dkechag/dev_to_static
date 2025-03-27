@@ -33,23 +33,20 @@ It's useful if you want to host your content elsewhere, reach readers where DEV 
 
 ## Usage
 
-Change 2 lines in dev_to_static.pl with your username and your desired blog name:
+You need to specify at least your DEV user name when calling the script:
 
 ```
-my $username = 'your_dev_to_username';
-my $blogname = "your_blog_name";
+./dev_to_static.pl -u <username>
+
+# or to also specify a target directory:
+./dev_to_static.pl -u <username> -t <directory>
 ```
 
-You can adapt `style.css` to your own theme and use your own `favicon.png`.
+See option `-h` to get more help.
 
-Generate the static site to a `target_directory`:
+You can adapt `style.css` to your own theme and use your own `favicon.png`. Any assets you add to your theme, save them at the script's directory and provide their filenames to the `-a` argument so that they are copied to the target directory.
 
-
-```
-perl dev_to_static.pl target_directory
-```
-
-You can run it on your web host, or run locally and copy the resulting directory to your host (scp/FTP/rsync etc).
+You can run the script on your web host, or run locally and copy the resulting directory to your host (scp/FTP/rsync etc).
 
 To keep your mirror up to date, you can set up a nightly cron job.
 

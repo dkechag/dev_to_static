@@ -7,6 +7,7 @@ use Getopt::Long;
 use JSON;
 use LWP::UserAgent;
 use Path::Tiny;
+use Pod::Usage;
 use Time::Piece;
 
 =head1 NAME
@@ -23,8 +24,10 @@ dev_to_static.pl
  -title <blog_title>  : Blog title (Default: "<username>'s blog").
  -assets  | -a <list> : Comma separated list of extra assets.
  -verbose | -v        : Verbose output.
+ -help    | -h        : Show this help.
 
-Creates a local static copy of a DEV blog.
+Creates a local static copy of a DEV (dev.to) blog. Can specify a -target directory,
+otherwise C<index.html> will be created at the current directory.
 
 =cut
 
@@ -36,8 +39,10 @@ GetOptions(
     'title=s',
     'assets|a=s',
     'verbose|v',
+    'help|h',
 );
 
+pod2usage({-verbose => 1}) if $opt{help};
 die '--username argument required' unless $opt{user};
 my $target   = $opt{target} ||= '.';
 my $blogname = $opt{title} || "$opt{user}'s blog";
