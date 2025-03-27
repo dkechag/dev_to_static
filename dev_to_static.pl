@@ -3,18 +3,49 @@
 use utf8;
 use strict;
 use warnings;
-use LWP::UserAgent;
+use Getopt::Long;
 use JSON;
+use LWP::UserAgent;
 use Path::Tiny;
 use Time::Piece;
 
-my $target   = $ARGV[0] || '.';
-my $username = 'your_dev_to_username';
-my $blogname = "your_blog_name";
+=head1 NAME
+
+dev_to_static.pl
+
+=head1 SYNOPSIS
+
+ ./dev_to_static.pl -u <username> [options]
+
+ Options:
+ -user    | -u <name> : DEV user name (required).
+ -target  | -t <dir>  : Target directory.
+ -title <blog_title>  : Blog title (Default: "<username>'s blog").
+ -assets  | -a <list> : Comma separated list of extra assets.
+ -verbose | -v        : Verbose output.
+
+Creates a local static copy of a DEV blog.
+
+=cut
+
+my %opt;
+GetOptions(
+    \%opt,
+    'target|t=s',
+    'user|u=s',
+    'title=s',
+    'assets|a=s',
+    'verbose|v',
+);
+
+die '--username argument required' unless $opt{user};
+my $target   = $opt{target} ||= '.';
+my $blogname = $opt{title} || "$opt{user}'s blog";
 my $dir      = path(__FILE__)->absolute->parent;
-my $api_url  = "https://dev.to/api/articles?username=$username&per_page=100";
+my $api_url  = "https://dev.to/api/articles?username=$opt{user}&per_page=100";
 my $ua       = LWP::UserAgent->new(agent => 'Mozilla/5.0 Chrome/122.0.0.0 Safari/537.36');
 my @assets   = qw/style.css favicon.png/;
+push @assets, split(/,/, $opt{assets}) if $opt{assets};
 
 # Create target dir and copy assets
 $target =~ s#/$##;
@@ -144,17 +175,26 @@ sub render_html {
         <script>hljs.highlightAll();</script>
         </head>
         <body>\n$content<footer class='site-footer'>
-        <p>This is a static mirror of <a href='https://dev.to/$username'>my DEV blog</a>,
+        <p>This is a static mirror of <a href='https://dev.to/$opt{user}'>my DEV blog</a>,
         created for wider accessibility using <a href='https://github.com/dkechag/dev_to_static'>dev_to_static</a>.</p>
         </footer>
         </body>\n</html>"
     );
+    print "Created: $filename\n" if $opt{verbose};
 }
 
 sub fetch_article_content {
     my $article_id  = shift;
     my $article_res = $ua->get("https://dev.to/api/articles/$article_id");
-    return "Failed to fetch article" unless $article_res->is_success;
+    unless ($article_res->is_success) {
+        warn $article_res->status_line;
+        sleep 3;
+        $article_res = $ua->get("https://dev.to/api/articles/$article_id");
+        unless ($article_res->is_success) {
+            warn $article_res->status_line;
+            return "Failed to fetch article";
+        }
+    }
 
     my $article_data = decode_json($article_res->decoded_content);
     return $article_data->{body_html} || "Content not available";
