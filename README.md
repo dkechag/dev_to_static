@@ -38,8 +38,8 @@ You need to specify at least your DEV user name when calling the script:
 ```
 ./dev_to_static.pl -u <username>
 
-# or to also specify a target directory:
-./dev_to_static.pl -u <username> -t <directory>
+# or to also specify a target directory and name your blog:
+./dev_to_static.pl -u <username> -t <directory> -title="Blog name"
 ```
 
 See option `-h` to get more help.
