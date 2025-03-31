@@ -19,12 +19,13 @@ dev_to_static.pl
  ./dev_to_static.pl -u <username> [options]
 
  Options:
- -user    | -u <name> : DEV user name (required).
- -target  | -t <dir>  : Target directory.
- -title <blog_title>  : Blog title (Default: "<username>'s blog").
- -assets  | -a <list> : Comma separated list of extra assets.
- -verbose | -v        : Verbose output.
- -help    | -h        : Show this help.
+ -user      | -u <name> : DEV user name (required).
+ -target    | -t <dir>  : Target directory.
+ -title <blog_title>    : Blog title (Default: "<username>'s blog").
+ -assets    | -a <list> : Comma separated list of extra assets.
+ -verbose   | -v        : Verbose output.
+ -canonical | -c        : Will include canonical links to original articles.
+ -help      | -h        : Show this help.
 
 Creates a local static copy of a DEV (dev.to) blog. Can specify a -target directory,
 otherwise C<index.html> will be created at the current directory.
@@ -39,6 +40,7 @@ GetOptions(
     'title=s',
     'assets|a=s',
     'verbose|v',
+    'canonical|c',
     'help|h',
 );
 
@@ -169,8 +171,10 @@ sub render_html {
     my $title    = shift;
     my $content  = shift;
     my $filename = shift;
-    my $canon    = shift || "";
-    $canon  = "<link rel='canonical' href='$canon'>" if $canon;
+    my $url      = shift;
+    my $canon    = "";
+    $canon  = "<link rel='canonical' href='$url'>" if $url && $opt{canonical};
+
     path("$target/$filename")->spew_utf8("<html>
         <head><meta charset='utf-8'>
         $canon<link rel='stylesheet' href='style.css'><link rel='icon' type='image/png' href='favicon.png'>
@@ -192,11 +196,11 @@ sub fetch_article_content {
     my $article_id  = shift;
     my $article_res = $ua->get("https://dev.to/api/articles/$article_id");
     unless ($article_res->is_success) {
-        warn $article_res->status_line;
+        warn "$article_id warn: $article_res->status_line\n";
         sleep 3;
         $article_res = $ua->get("https://dev.to/api/articles/$article_id");
         unless ($article_res->is_success) {
-            warn $article_res->status_line;
+            warn "$article_id failure: $article_res->status_line\n";
             return "Failed to fetch article";
         }
     }

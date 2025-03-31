@@ -9,9 +9,9 @@ It's useful if you want to host your content elsewhere, reach readers where DEV 
 
 ## Features
 
-- Static HTML for each article, canonical URL from DEV.to.
+- Static HTML for each article, option for canonical URL to original.
 - Sidebar navigation with articles and tags.
-- Index page and per-tag index pages0
+- Index page and per-tag index pages.
 - Syntax highlighting using highlight.js.
 - Default dark theme (style.css).
 
@@ -23,7 +23,7 @@ It's useful if you want to host your content elsewhere, reach readers where DEV 
 
 ## Requirements
 
-- Perl 5 (down to 5.10 tested, may work on even more ancient versions).
+- Perl 5 (tested down to 5.10, may work on even more ancient versions).
 - The following CPAN modules:
   - `LWP::UserAgent`
   - `JSON`
