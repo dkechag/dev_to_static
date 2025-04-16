@@ -196,11 +196,11 @@ sub fetch_article_content {
     my $article_id  = shift;
     my $article_res = $ua->get("https://dev.to/api/articles/$article_id");
     unless ($article_res->is_success) {
-        warn "$article_id warn: $article_res->status_line\n";
+        warn "$article_id warn: ".$article_res->status_line."\n";
         sleep 3;
         $article_res = $ua->get("https://dev.to/api/articles/$article_id");
         unless ($article_res->is_success) {
-            warn "$article_id failure: $article_res->status_line\n";
+            warn "$article_id failure: ".$article_res->status_line."\n";
             return "Failed to fetch article";
         }
     }
