@@ -45,7 +45,7 @@ You need to specify at least your DEV user name when calling the script:
 
 See option `-h` to get more help.
 
-A useful option is `-api_key` (get yours from [https://dev.to/settings/extensions]), which will avoid caching and make sure you get the most up to date response.
+A useful option is `-api_key` (get yours from <https://dev.to/settings/extensions>), which will avoid caching and make sure you get the most up to date response.
 
 You can adapt `style.css` to your own theme and use your own `favicon.png`. Any assets you add to your theme, save them at the script's directory and provide their filenames to the `-a` argument so that they are copied to the target directory.
 
