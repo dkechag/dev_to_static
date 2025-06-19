@@ -4,6 +4,7 @@ use utf8;
 use strict;
 use warnings;
 use Getopt::Long;
+use HTTP::Message;
 use JSON;
 use LWP::UserAgent;
 use Path::Tiny;
@@ -24,6 +25,7 @@ dev_to_static.pl
  -title <blog_title>    : Blog title (Default: "<username>'s blog").
  -assets    | -a <list> : Comma separated list of extra assets.
  -verbose   | -v        : Verbose output.
+ -api_key               : Use api-key method to fetch article list.
  -canonical | -c        : Will include canonical links to original articles.
  -help      | -h        : Show this help.
 
@@ -41,6 +43,7 @@ GetOptions(
     'assets|a=s',
     'verbose|v',
     'canonical|c',
+    'api_key=s',
     'help|h',
 );
 
@@ -49,10 +52,18 @@ die '--username argument required' unless $opt{user};
 my $target   = $opt{target} ||= '.';
 my $blogname = $opt{title} || "$opt{user}'s blog";
 my $dir      = path(__FILE__)->absolute->parent;
-my $api_url  = "https://dev.to/api/articles?username=$opt{user}&per_page=100";
-my $ua       = LWP::UserAgent->new(agent => 'Mozilla/5.0 Chrome/122.0.0.0 Safari/537.36');
+my $ua       = LWP::UserAgent->new();
+my $acc_enc  = HTTP::Message::decodable;
 my @assets   = qw/style.css favicon.png/;
 push @assets, split(/,/, $opt{assets}) if $opt{assets};
+$ua->default_header(
+    'Accept'          => 'application/vnd.forem.api-v1+json',
+    'Cache-Control'   => 'no-cache',
+    'Pragma'          => 'no-cache',
+    'User-Agent'      => 'Mozilla/5.0 Chrome/122.0.0.0 Safari/537.36',
+    'Accept-Encoding' => $acc_enc,
+);
+$ua->default_header('api-key' => $opt{api_key}) if $opt{api_key};
 
 # Create target dir and copy assets
 $target =~ s#/$##;
@@ -60,8 +71,14 @@ path($target)->mkpath;
 $dir->child($_)->copy(path($target)->child($_)) for @assets;
 
 # Fetch articles from dev.to
+my $api_url =
+    $opt{api_key}
+    ? 'https://dev.to/api/articles/me?per_page=1000'
+    : "https://dev.to/api/articles?username=$opt{user}&per_page=1000";
+
 my $response = $ua->get($api_url);
-die "Failed to fetch posts: " . $response->status_line unless $response->is_success;
+die "Failed to fetch posts: " . $response->status_line
+    unless $response->is_success;
 
 my $articles = decode_json($response->decoded_content);
 
@@ -157,6 +174,7 @@ sub render_tagline {
 
 sub published {
     my $pub_time = shift;
+    $pub_time =~ s/\.\d+Z/Z/;
     return localtime->strptime($pub_time, '%Y-%m-%dT%H:%M:%SZ')->strftime('Published: %b %d, %Y');
 }
 
@@ -196,11 +214,11 @@ sub fetch_article_content {
     my $article_id  = shift;
     my $article_res = $ua->get("https://dev.to/api/articles/$article_id");
     unless ($article_res->is_success) {
-        warn "$article_id warn: ".$article_res->status_line."\n";
+        warn "$article_id warn: $article_res->status_line\n";
         sleep 3;
         $article_res = $ua->get("https://dev.to/api/articles/$article_id");
         unless ($article_res->is_success) {
-            warn "$article_id failure: ".$article_res->status_line."\n";
+            warn "$article_id failure: $article_res->status_line\n";
             return "Failed to fetch article";
         }
     }
